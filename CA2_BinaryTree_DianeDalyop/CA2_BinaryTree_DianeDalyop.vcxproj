@@ -130,8 +130,9 @@
     <ClCompile Include="CA2_BinaryTree_DianeDalyop.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Desktop\Binary Tree Source\BinaryTree.h" />
-    <ClInclude Include="..\..\..\..\Desktop\Binary Tree Source\BSTNode.h" />
+    <ClInclude Include="BinaryTree.h" />
+    <ClInclude Include="BSTNode.h" />
+    <ClInclude Include="EntityKeyVal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
