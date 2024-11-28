@@ -2,6 +2,7 @@
 #ifndef BINARY_TREE_H
 #define BINARY_TREE_H
 #endif // BINARY_TREE_H
+#include "EntityKeyVal.h"
 
 #include "BSTNode.h"
 
@@ -15,7 +16,7 @@ public:
 	BinaryTree();
 	BinaryTree(const BinaryTree<T> &other);
 	BinaryTree<T> operator=(const BinaryTree<T>& other);
-	void add(T& item);
+	void add(const T& item);
 	bool remove(T& item);
 	void clear();
 	int count();
@@ -57,7 +58,7 @@ BinaryTree<T> BinaryTree<T>::operator=(const BinaryTree<T>& other)
 
 }
 template <class T>
-void BinaryTree<T>::add(T& item)
+void BinaryTree<T>::add(const T& item)
 {
 	if (root == nullptr)
 	{
@@ -195,9 +196,13 @@ T* BinaryTree<T>::toArray()
 template <class T>
 void BinaryTree<T>::clear()
 {
-	delete root;
-	root = nullptr;
+	if (root != nullptr) {
+		delete root;
+		root = nullptr;
+	}
 }
+
+
 template <class T>
 BinaryTree<T>::~BinaryTree()
 {

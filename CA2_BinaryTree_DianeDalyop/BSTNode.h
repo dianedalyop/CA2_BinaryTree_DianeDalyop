@@ -18,7 +18,7 @@ public:
 	BSTNode(T data);
 	void setItem(T item);
 	int count();
-	void add(T& item);
+	void add(const T& item);
 	BSTNode<T>* getParent();
 	BSTNode<T>* getLeft();
 	BSTNode<T>* getRight();
@@ -37,19 +37,23 @@ BSTNode<T>::BSTNode(const BSTNode<T>& other)
 		this->left = new BSTNode<T>(*other.left);
 	if(other.right!=nullptr)
 		this->right = new BSTNode<T>(*other.right);
-
+	this->data = other.data;
 }
 
 template <class T>
 BSTNode<T>* BSTNode<T>::operator=(const BSTNode<T>& other)
 {
 	if (this == &other)
-		return *this;
+		return this;
+	delete left;
+	delete right;
 	left = right = nullptr;
 	if (other.left != nullptr)
 		this->left = new BSTNode<T>(*other.left);
 	if (other.right != nullptr)
 		this->right = new BSTNode<T>(*other.right);
+	this->data = other.data;
+	return this;
 	
 }
 template <class T>
@@ -132,7 +136,7 @@ int BSTNode<T>::count()
 }
 
 template <class T>
-void BSTNode<T>::add(T& item)
+void BSTNode<T>::add(const T& item)
 {
 	if (item == this->data)
 	{
@@ -171,4 +175,6 @@ void BSTNode<T>::setItem(T item)
 {
 	this->data = item;
 }
+
+
 
