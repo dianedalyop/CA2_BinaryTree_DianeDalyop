@@ -6,21 +6,16 @@
 #include <iomanip>
 using namespace std;
 #include "BinaryTree.h";
-#include "BSTNode.h";
-#include "EntityKeyVal.h";
 // 
-int main(){
+int main() {
+    BSTNode<int, std::string> root(std::make_pair(1, "Apple"));
+    root.add(std::make_pair(2, "Banana"));
+    root.add(std::make_pair(3, "Cherry"));
 
-    BinaryTree<int> mytree;
-    mytree.add(2);
-    mytree.add(8);
-    cout << "Before clear: " << mytree.count() << endl;
-    mytree.clear();
-    cout << "After clear: " << mytree.count() << endl;
-
-
+    std::cout << "Root Item: " << root.getItem().first << " - " << root.getItem().second << std::endl;  
+    std::cout << "Left Item: " << root.getLeft()->getItem().first << " - " << root.getLeft()->getItem().second << std::endl; 
+    std::cout << "Right Item: " << root.getRight()->getItem().first << " - " << root.getRight()->getItem().second << std::endl;  
 
     return 0;
-    
 }
 
