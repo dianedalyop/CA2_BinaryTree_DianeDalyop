@@ -1,216 +1,315 @@
 ﻿#pragma once
-#ifndef BINARY_TREE_H
-#define BINARY_TREE_H
-#endif // BINARY_TREE_H
-
+#include <iostream>
+#include <stdexcept>
 #include "BSTNode.h"
+#include "EntityKeyPair.h"
 #include <vector>
-#include <utility> // For std::pair
+#include <string>
 
 template <class K, class V>
-class BinaryTree {
-    void addItemToArray(BSTNode<K, V>* node, int& pos, std::pair<K, V>* arr);
+class BinaryTree
+{
+    void addItemToArray(BSTNode<EntityKeyPair<K, V>>* node, int& pos, EntityKeyPair<K, V>* arr);
+
+   
 
 public:
-    BSTNode<K, V>* root;
+    BSTNode<EntityKeyPair<K, V>>* root;
+
+    /// Constructor
     BinaryTree();
     BinaryTree(const BinaryTree<K, V>& other);
-    BinaryTree<K, V> operator=(const BinaryTree<K, V>& other);
-    void add(const std::pair<K, V>& item);  // Adding key-value pair
-    bool remove(const std::pair<K, V>& item);  // Removing key-value pair
-    void clear();
+    BinaryTree<K, V>& operator=(const BinaryTree<K, V>& other);
+    ~BinaryTree(); // Destructor
+
+    /// Main functions
+    void add(const K& key, const V& value);
+    bool remove(const K& key);
+    void clear(); // Clears the entire tree
     int count();
-    std::pair<K, V>& get(const K& key);  // Get value by key
+    V& get(const K& key);
+
+    bool containsKey(K key);
 
     void printInOrder();
-    void printInOrder(BSTNode<K, V>* node);
+    void printInOrder(BSTNode<EntityKeyPair<K, V>>* node);
     void printPreOrder();
-    void printPreOrder(BSTNode<K, V>* node);
+    void printPreOrder(BSTNode<EntityKeyPair<K, V>>* node);
     void printPostOrder();
-    void printPostOrder(BSTNode<K, V>* node);
-    std::pair<K, V>* toArray();
-    ~BinaryTree();
+    void printPostOrder(BSTNode<EntityKeyPair<K, V>>* node);
+
+    EntityKeyPair<K, V>* toArray();
 };
 
+// Constructor
 template <class K, class V>
-BinaryTree<K, V>::BinaryTree() {
+BinaryTree<K, V>::BinaryTree()
+{
     root = nullptr;
 }
 
+// Copy Constructor
 template <class K, class V>
-BinaryTree<K, V>::BinaryTree(const BinaryTree<K, V>& other) {
+BinaryTree<K, V>::BinaryTree(const BinaryTree<K, V>& other)
+{
     root = nullptr;
     if (other.root != nullptr)
-        root = new BSTNode<K, V>(*other.root);
+        root = new BSTNode<EntityKeyPair<K, V>>(*other.root);
 }
 
+// Assignment Operator
 template <class K, class V>
-BinaryTree<K, V> BinaryTree<K, V>::operator=(const BinaryTree<K, V>& other) {
-    if (this == &other) return *this;
+BinaryTree<K, V>& BinaryTree<K, V>::operator=(const BinaryTree<K, V>& other)
+{
+    if (this == &other)
+        return *this;
+
+    clear(); // Clear current tree
     if (other.root != nullptr)
-        root = new BSTNode<K, V>(*other.root);
-    else
-        root = nullptr;
+        root = new BSTNode<EntityKeyPair<K, V>>(*other.root);
+
     return *this;
 }
 
+// Destructor
 template <class K, class V>
-void BinaryTree<K, V>::add(const std::pair<K, V>& item) {
-    if (root == nullptr) {
-        root = new BSTNode<K, V>(item);
+BinaryTree<K, V>::~BinaryTree()
+{
+    clear(); // Clears the tree to release memory
+}
+
+// Clear Function
+template <class K, class V>
+void BinaryTree<K, V>::clear()
+{
+    delete root;   
+    root = nullptr; 
+}
+
+// Add Function
+template <class K, class V>
+void BinaryTree<K, V>::add(const K& key, const V& value)
+{
+    EntityKeyPair<K, V> pair(key, value);
+    if (root == nullptr)
+    {
+        root = new BSTNode<EntityKeyPair<K, V>>(pair);
     }
-    else {
-        root->add(item);
+    else
+    {
+        root->add(pair);
     }
 }
 
+// Remove Function
 template <class K, class V>
-bool BinaryTree<K, V>::remove(const std::pair<K, V>& item) {
-    BSTNode<K, V>* toBeRemoved = root;
-    BSTNode<K, V>* parent = nullptr;
+bool BinaryTree<K, V>::remove(const K& key)
+{
+    EntityKeyPair<K, V> searchKey(key, V());
+    BSTNode<EntityKeyPair<K, V>>* toBeRemoved = root;
+    BSTNode<EntityKeyPair<K, V>>* parent = nullptr;
     bool found = false;
 
+    // find the node to remove
     while (!found && toBeRemoved != nullptr) {
-        if (toBeRemoved->getKey() == item.first) {  // Compare the keys
+        if (toBeRemoved->getItem() == searchKey) {
             found = true;
         }
-        else if (toBeRemoved->getKey() > item.first) {
-            toBeRemoved = toBeRemoved->getLeft();
-        }
         else {
-            toBeRemoved = toBeRemoved->getRight();
+            parent = toBeRemoved;
+            if (searchKey < toBeRemoved->getItem()) {
+                toBeRemoved = toBeRemoved->getLeft();
+            }
+            else {
+                toBeRemoved = toBeRemoved->getRight();
+            }
         }
     }
 
-    if (!found)
-        return false;
+    if (!found) return false; // Node not found
 
-    if (toBeRemoved->getLeft() == nullptr || toBeRemoved->getRight() == nullptr) {
-        BSTNode<K, V>* newChild;
-        if (toBeRemoved->getLeft() == nullptr) {
-            newChild = toBeRemoved->getRight();
-        }
-        else {
-            newChild = toBeRemoved->getLeft();
-        }
-        if (parent == nullptr) {
-            root = newChild;
+    // Node has no children
+    if (toBeRemoved->getLeft() == nullptr && toBeRemoved->getRight() == nullptr) {
+        if (parent == nullptr) { // Removing root node
+            root = nullptr;
         }
         else if (parent->getLeft() == toBeRemoved) {
-            parent->setLeft(newChild);
+            parent->setLeft(nullptr);
         }
         else {
-            parent->setRight(newChild);
+            parent->setRight(nullptr);
         }
+        delete toBeRemoved;
         return true;
     }
 
-    BSTNode<K, V>* smallestParent = toBeRemoved;
-    BSTNode<K, V>* smallest = toBeRemoved->getRight();
-    while (smallest->getLeft() != nullptr) {
+    //  Node has one child
+    if (toBeRemoved->getLeft() == nullptr || toBeRemoved->getRight() == nullptr) {
+        BSTNode<EntityKeyPair<K, V>>* child = (toBeRemoved->getLeft() == nullptr)
+            ? toBeRemoved->getRight()
+            : toBeRemoved->getLeft();
+
+        if (parent == nullptr) { 
+            root = child;
+        }
+        else if (parent->getLeft() == toBeRemoved) {
+            parent->setLeft(child);
+        }
+        else {
+            parent->setRight(child);
+        }
+        delete toBeRemoved;
+        return true;
+    }
+
+    //  Node has two children
+    BSTNode<EntityKeyPair<K, V>>* smallestParent = toBeRemoved;
+    BSTNode<EntityKeyPair<K, V>>* smallest = toBeRemoved->getRight();
+    while (smallest->getLeft() != nullptr) {  
         smallestParent = smallest;
         smallest = smallest->getLeft();
     }
-    toBeRemoved->setItem(smallest->getItem());  // Copy the smallest value into toBeRemoved
-    if (smallestParent == toBeRemoved) {
-        smallestParent->setRight(smallest->getRight());
-    }
-    else {
+
+    // Replace current node's data with the smallest node (in-order successor)
+    toBeRemoved->setItem(smallest->getItem());
+
+    // Remove the in-order successor
+    if (smallestParent->getLeft() == smallest) {
         smallestParent->setLeft(smallest->getRight());
     }
+    else {
+        smallestParent->setRight(smallest->getRight());
+    }
+    delete smallest;
     return true;
 }
 
+// Get Function
 template <class K, class V>
-std::pair<K, V>& BinaryTree<K, V>::get(const K& key) {
-    BSTNode<K, V>* current = root;
-    while (current != nullptr) {
-        if (current->getKey() == key)
-            return current->getItem();  // Return the key-value pair
-        else if (current->getKey() > key)
+V& BinaryTree<K, V>::get(const K& key)
+{
+    EntityKeyPair<K, V> searchKey(key, V());
+    BSTNode<EntityKeyPair<K, V>>* current = root;
+
+    while (current != nullptr)
+    {
+        if (current->getItem() == searchKey)
+            return current->getItem().getValue();
+        else if (searchKey < current->getItem())
             current = current->getLeft();
         else
             current = current->getRight();
     }
-    throw std::logic_error("Item not found");
+
+    throw std::logic_error("Key not found!");
 }
 
+// Count Function
 template <class K, class V>
-void BinaryTree<K, V>::addItemToArray(BSTNode<K, V>* node, int& pos, std::pair<K, V>* arr) {
-    if (node != nullptr) {
-        addItemToArray(node->getLeft(), pos, arr);
-        arr[pos] = node->getItem();
-        pos++;
-        addItemToArray(node->getRight(), pos, arr);
-    }
+int BinaryTree<K, V>::count()
+{
+    if (root == nullptr)
+        return 0;
+    return root->count();
 }
 
+// Traversals
 template <class K, class V>
-std::pair<K, V>* BinaryTree<K, V>::toArray() {
-    std::pair<K, V>* arr = new std::pair<K, V>[root->count()];
-    int pos = 0;
-    addItemToArray(root, pos, arr);
-    return arr;
-}
-
-template <class K, class V>
-void BinaryTree<K, V>::clear() {
-    if (root != nullptr) {
-        delete root;
-        root = nullptr;
-    }
-}
-
-template <class K, class V>
-BinaryTree<K, V>::~BinaryTree() {
-    if (root != nullptr) {
-        delete root;
-        root = nullptr;
-    }
-}
-
-// Print methods (you can implement as needed)
-template <class K, class V>
-void BinaryTree<K, V>::printInOrder() {
+void BinaryTree<K, V>::printInOrder()
+{
     printInOrder(root);
     std::cout << std::endl;
 }
 
 template <class K, class V>
-void BinaryTree<K, V>::printInOrder(BSTNode<K, V>* node) {
-    if (node != nullptr) {
-        printInOrder(node->getLeft());
-        std::cout << node->getKey() << " - " << node->getValue() << std::endl;  // Print key-value
-        printInOrder(node->getRight());
-    }
-}
+void BinaryTree<K, V>::printInOrder(BSTNode<EntityKeyPair<K, V>>* node)
+{
+    if (node == nullptr) return;
 
+    printInOrder(node->getLeft());
+    std::cout << node->getItem().getKey() << ": " << node->getItem().getValue() << std::endl;
+    printInOrder(node->getRight());
+}
 template <class K, class V>
-void BinaryTree<K, V>::printPreOrder() {
+void BinaryTree<K, V>::printPreOrder()
+{
     printPreOrder(root);
     std::cout << std::endl;
 }
 
 template <class K, class V>
-void BinaryTree<K, V>::printPreOrder(BSTNode<K, V>* node) {
-    if (node != nullptr) {
-        std::cout << node->getKey() << " - " << node->getValue() << std::endl;
+void BinaryTree<K, V>::printPreOrder(BSTNode<EntityKeyPair<K, V>>* node)
+{
+    if (node != nullptr)
+    {
+        std::cout << node->getItem().getKey() << ": " << node->getItem().getValue() << std::endl;
         printPreOrder(node->getLeft());
         printPreOrder(node->getRight());
     }
 }
 
 template <class K, class V>
-void BinaryTree<K, V>::printPostOrder() {
+void BinaryTree<K, V>::printPostOrder()
+{
     printPostOrder(root);
     std::cout << std::endl;
 }
 
 template <class K, class V>
-void BinaryTree<K, V>::printPostOrder(BSTNode<K, V>* node) {
-    if (node != nullptr) {
+void BinaryTree<K, V>::printPostOrder(BSTNode<EntityKeyPair<K, V>>* node)
+{
+    if (node != nullptr)
+    {
         printPostOrder(node->getLeft());
         printPostOrder(node->getRight());
-        std::cout << node->getKey() << " - " << node->getValue() << std::endl;
+        std::cout << node->getItem().getKey() << ": " << node->getItem().getValue() << std::endl;
     }
 }
+
+// Convert to Array
+template <class K, class V>
+EntityKeyPair<K, V>* BinaryTree<K, V>::toArray()
+{
+    int size = count();
+    EntityKeyPair<K, V>* arr = new EntityKeyPair<K, V>[size];
+    int pos = 0;
+    addItemToArray(root, pos, arr);
+    return arr;
+}
+
+template <class K, class V>
+
+void BinaryTree<K, V>::addItemToArray(BSTNode<EntityKeyPair<K, V>>* node, int& pos, EntityKeyPair<K, V>* arr)
+{
+    if (node != nullptr)
+    {
+        addItemToArray(node->getLeft(), pos, arr);
+        arr[pos++] = node->getItem();
+        addItemToArray(node->getRight(), pos, arr);
+    }
+}
+
+// contains key 
+
+template <class K, class V>
+bool BinaryTree<K, V>::containsKey(K key)
+{
+    BSTNode<EntityKeyPair<K, V>>* current = root;
+
+    while (current != nullptr) {
+        if (key == current->getItem().getKey()) {
+            return true;  
+            // found
+        }
+        else if (key < current->getItem().getKey()) {
+            current = current->getLeft();  //  left
+        }
+        else {
+            current = current->getRight(); //  right
+        }
+    }
+
+    return false; 
+    // not found
+}
+

@@ -1,115 +1,101 @@
 #pragma once
 #include <iostream>
-#include <utility>  // For std::pair
+#include "EntityKeyPair.h"
 
 using namespace std;
 
-template <class K, class V>
-class BSTNode {
-    BSTNode<K, V>* parent;
-    BSTNode<K, V>* left;
-    BSTNode<K, V>* right;
-    std::pair<K, V> data;  // Key-value pair
+template <class T>
+class BSTNode
+{
+    BSTNode<T>* parent;
+    BSTNode<T>* left;
+    BSTNode<T>* right;
+    T data;
 
 public:
     BSTNode();
-    BSTNode(const BSTNode<K, V>& other);
-    BSTNode<K, V>* operator=(const BSTNode<K, V>& other);
-    BSTNode(std::pair<K, V> data);
-
-    void setItem(std::pair<K, V> item);
-    std::pair<K, V>& getItem();  // Return reference to pair
-    K getKey();  // Get key from pair
-    V getValue();  // Get value from pair
-
+    BSTNode(const BSTNode<T>& other);
+    BSTNode<T>* operator=(const BSTNode<T>& other);
+    BSTNode(T data);
+    void setItem(T item);
     int count();
-    void add(const std::pair<K, V>& item);  // Add key-value pair
-
-    BSTNode<K, V>* getParent();
-    BSTNode<K, V>* getLeft();
-    BSTNode<K, V>* getRight();
-    void setLeft(BSTNode<K, V>* l);
-    void setRight(BSTNode<K, V>* r);
-
+    void add(T& item);
+    BSTNode<T>* getParent();
+    BSTNode<T>* getLeft();
+    BSTNode<T>* getRight();
+    void setLeft(BSTNode<T>* l);
+    void setRight(BSTNode<T>* r);
+    T& getItem();
     ~BSTNode();
 };
 
-template <class K, class V>
-BSTNode<K, V>::BSTNode(const BSTNode<K, V>& other) {
+// Constructor
+template <class T>
+BSTNode<T>::BSTNode() : parent(nullptr), left(nullptr), right(nullptr), data(T()) {}
+
+// Parameterized constructor
+template <class T>
+BSTNode<T>::BSTNode(T data) : parent(nullptr), left(nullptr), right(nullptr), data(data) {}
+
+// Copy constructor
+template <class T>
+BSTNode<T>::BSTNode(const BSTNode<T>& other)
+{
     left = right = nullptr;
-    data = other.data;  // Copy the key-value pair
-    if (other.left != nullptr)
-        this->left = new BSTNode<K, V>(*other.left);
-    if (other.right != nullptr)
-        this->right = new BSTNode<K, V>(*other.right);
+    if (other.left != nullptr) {
+        this->left = new BSTNode<T>(*other.left);
+        this->left->parent = this;  // Set the parent for left child
+    }
+    if (other.right != nullptr) {
+        this->right = new BSTNode<T>(*other.right);
+        this->right->parent = this;  // Set the parent for right child
+    }
+    this->data = other.data;
 }
 
-template <class K, class V>
-BSTNode<K, V>* BSTNode<K, V>::operator=(const BSTNode<K, V>& other) {
-    if (this == &other) return this;
+// Assignment operator
+template <class T>
+BSTNode<T>* BSTNode<T>::operator=(const BSTNode<T>& other)
+{
+    if (this == &other)
+        return *this;
 
-    delete left;
+    delete left;  // Delete current children to prevent memory leaks
     delete right;
+
     left = right = nullptr;
-
-    data = other.data;  // Copy the key-value pair
-    if (other.left != nullptr)
-        this->left = new BSTNode<K, V>(*other.left);
-    if (other.right != nullptr)
-        this->right = new BSTNode<K, V>(*other.right);
-
-    return this;
-}
-
-template <class K, class V>
-BSTNode<K, V>::~BSTNode() {
-    if (left != nullptr) {
-        delete left;
-        left = nullptr;
+    if (other.left != nullptr) {
+        this->left = new BSTNode<T>(*other.left);
+        this->left->parent = this;
     }
-    if (right != nullptr) {
-        delete right;
-        right = nullptr;
+    if (other.right != nullptr) {
+        this->right = new BSTNode<T>(*other.right);
+        this->right->parent = this;
     }
+    this->data = other.data;
+
+    return *this;
 }
 
-template <class K, class V>
-BSTNode<K, V>::BSTNode() {
-    parent = nullptr;
-    left = nullptr;
-    right = nullptr;
+// Destructor
+template <class T>
+BSTNode<T>::~BSTNode()
+{
+    delete left;  // Delete left child
+    delete right; // Delete right child
 }
 
-template <class K, class V>
-BSTNode<K, V>::BSTNode(std::pair<K, V> data) {
-    parent = nullptr;
-    left = nullptr;
-    right = nullptr;
-    this->data = data;
-}
-
-template <class K, class V>
-void BSTNode<K, V>::setItem(std::pair<K, V> item) {
+// Set item
+template <class T>
+void BSTNode<T>::setItem(T item)
+{
     this->data = item;
 }
 
-template <class K, class V>
-std::pair<K, V>& BSTNode<K, V>::getItem() {
-    return this->data;
-}
-
-template <class K, class V>
-K BSTNode<K, V>::getKey() {
-    return this->data.first;
-}
-
-template <class K, class V>
-V BSTNode<K, V>::getValue() {
-    return this->data.second;
-}
-
-template <class K, class V>
-int BSTNode<K, V>::count() {
+// Count function
+template <class T>
+int BSTNode<T>::count()
+{
     int c = 1;
     if (left != nullptr) {
         c += left->count();
@@ -120,52 +106,68 @@ int BSTNode<K, V>::count() {
     return c;
 }
 
-template <class K, class V>
-void BSTNode<K, V>::add(const std::pair<K, V>& item) {
-    if (item.first == this->data.first) {  // Check if the key already exists
-        return;  // Do not insert duplicate keys
+// Add function
+template <class T>
+void BSTNode<T>::add(T& item)
+{
+    if (item == this->data) {
+        return; // No duplicates
     }
-    else if (item.first < this->data.first) {  // Compare keys
+    else if (item < this->data) {
         if (left == nullptr) {
-            left = new BSTNode<K, V>(item);
-            left->parent = this;
+            left = new BSTNode<T>(item);
+            left->parent = this;  // Set parent
         }
         else {
-            left->add(item);
+            left->add(item); // Recursively add to left
         }
     }
     else {
         if (right == nullptr) {
-            right = new BSTNode<K, V>(item);
-            right->parent = this;
+            right = new BSTNode<T>(item);
+            right->parent = this;  // Set parent
         }
         else {
-            right->add(item);
+            right->add(item); // Recursively add to right
         }
     }
 }
 
-template <class K, class V>
-BSTNode<K, V>* BSTNode<K, V>::getParent() {
+// Getters for left, right, and parent
+template <class T>
+BSTNode<T>* BSTNode<T>::getParent()
+{
     return this->parent;
 }
 
-template <class K, class V>
-BSTNode<K, V>* BSTNode<K, V>::getLeft() {
-    return this->left;
+template <class T>
+BSTNode<T>* BSTNode<T>::getLeft()
+{
+     return this->left;
 }
 
-template <class K, class V>
-BSTNode<K, V>* BSTNode<K, V>::getRight() {
+template <class T>
+BSTNode<T>* BSTNode<T>::getRight()
+{
     return this->right;
 }
 
-template <class K, class V>
-void BSTNode<K, V>::setLeft(BSTNode<K, V>* l) {
+// Setters for left and right children
+template <class T>
+void BSTNode<T>::setLeft(BSTNode<T>* l)
+{
     this->left = l;
 }
 
-template <class K, class V>
-void BSTNode<K, V>::setRight(BSTNode<K, V>* r) {
+template <class T>
+void BSTNode<T>::setRight(BSTNode<T>* r)
+{
     this->right = r;
+}
+
+// Getter for the item
+template <class T>
+T& BSTNode<T>::getItem()
+{
+    return this->data;
 }

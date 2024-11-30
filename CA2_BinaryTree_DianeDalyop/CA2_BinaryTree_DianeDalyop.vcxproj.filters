@@ -26,5 +26,8 @@
     <ClInclude Include="BSTNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EntityKeyPair.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
