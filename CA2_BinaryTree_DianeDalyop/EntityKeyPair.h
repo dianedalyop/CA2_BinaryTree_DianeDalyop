@@ -21,12 +21,17 @@ public:
     }
 
     // Getter for the value
-    V getValue() const {
-        return value;
-    }
+   
+
+    V& getValue() { return value; } 
+
+
+    const V& getValue() const { return value; }   
+
 
     // Setter for the key
     void setKey(K key) {
+
         this->key = key;
     }
 
@@ -36,12 +41,12 @@ public:
     }
 
     // Overload the < operator for sorting in BST
-    bool operator<(const EntityKeyPair<K, V>& other) const {
+    bool operator<(const EntityKeyPair& other) const {
         return key < other.key;
     }
 
     // Overload the == operator for equality comparison
-    bool operator==(const EntityKeyPair<K, V>& other) const {
+    bool operator==(const EntityKeyPair& other) const {
         return key == other.key;
     }
 

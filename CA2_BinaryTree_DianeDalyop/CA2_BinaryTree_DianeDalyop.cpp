@@ -51,6 +51,16 @@ int main() {
     std::cout << " key 2 exist? " << (mytree.containsKey(2) ? "Yes" : "No") << std::endl; 
     std::cout << " key 10 exist? " << (mytree.containsKey(10) ? "Yes" : "No") << std::endl; 
 
+    // value for existing keys 
+
+    std::cout << "Value for key 2: " << mytree.getKeyValue(2) << std::endl;
+    // value for non - existing keys 
+    try {
+        std::cout << "Value for key 10: " << mytree.getKeyValue(10) << std::endl; 
+    }
+    catch (const std::logic_error& e) {
+        std::cerr << e.what() << std::endl;
+    }
 
     return 0;
 }

@@ -11,6 +11,7 @@ class BinaryTree
 {
     void addItemToArray(BSTNode<EntityKeyPair<K, V>>* node, int& pos, EntityKeyPair<K, V>* arr);
 
+
    
 
 public:
@@ -28,7 +29,7 @@ public:
     void clear(); // Clears the entire tree
     int count();
     V& get(const K& key);
-
+    V& getKeyValue(const K& key);
     bool containsKey(K key);
 
     void printInOrder();
@@ -289,6 +290,44 @@ void BinaryTree<K, V>::addItemToArray(BSTNode<EntityKeyPair<K, V>>* node, int& p
     }
 }
 
+
+
+//GET VALUE OF KEY 
+template <class K, class V>
+V& BinaryTree<K, V> ::getKeyValue(const K& key)
+{
+
+    EntityKeyPair<K, V> keyToFind(key, V());
+    BSTNode<EntityKeyPair<K, V>>* current = root;
+
+    while (current != nullptr)
+    {
+    // if my key is found return the value for it
+        if(current -> getItem() == keyToFind)
+
+        {
+           
+            return current->getItem().getValue();
+        }
+        else if (key < current->getItem().getKey())
+        {
+            current = current->getLeft();
+        }
+        else
+        {
+            
+            current = current->getRight();
+        }
+    }
+    throw std::logic_error("Key could not be found!!!!");
+
+}
+
+
+
+
+
+
 // contains key 
 
 template <class K, class V>
@@ -312,4 +351,5 @@ bool BinaryTree<K, V>::containsKey(K key)
     return false; 
     // not found
 }
+
 
