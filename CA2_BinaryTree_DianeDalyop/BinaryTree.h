@@ -10,6 +10,7 @@ template <class K, class V>
 class BinaryTree
 {
     void addItemToArray(BSTNode<EntityKeyPair<K, V>>* node, int& pos, EntityKeyPair<K, V>* arr);
+    
 
 public:
     BSTNode<EntityKeyPair<K, V>>* root;
@@ -23,10 +24,13 @@ public:
 
     /// Main functions
     void add(const K& key, const V& value);
-    bool remove(const K& key);
+
+    
+    bool removeKey(const K& key);
     void clear(); // Clears the entire tree
     int size();
     int count();
+    V& operator[](K key);
     V& get(const K& key);
     V& getKeyValue(const K& key);
     bool containsKey(K key);
@@ -103,89 +107,126 @@ void BinaryTree<K, V>::add(const K& key, const V& value)
         root->add(pair);
     }
 }
+// operator value function
+
+template <class K, class V>
+V& BinaryTree<K, V>::operator[](K key)
+{
+    EntityKeyPair<K, V> searchKey(key, V());  
+    BSTNode<EntityKeyPair<K, V>>* current = root;
+
+    
+    while (current != nullptr)
+    {
+        if (current->getItem() == searchKey)
+        {
+            return current->getItem().getValue();  
+        }
+        else if (key < current->getItem().getKey())
+        {
+            current = current->getLeft(); 
+        }
+        else
+        {
+            current = current->getRight(); 
+        }
+    }
+
+    // throw exception if key is not found
+    throw std::logic_error("Key not found in the map!");
+}
+
 
 // Remove Function
-template <class K, class V>
-bool BinaryTree<K, V>::remove(const K& key)
+// removeKey method to remove a node by key
+template<class K, class V>
+bool BinaryTree<K, V>::removeKey(const K& key)
 {
+   
     EntityKeyPair<K, V> searchKey(key, V());
     BSTNode<EntityKeyPair<K, V>>* toBeRemoved = root;
     BSTNode<EntityKeyPair<K, V>>* parent = nullptr;
     bool found = false;
 
-    // find the node to remove
-    while (!found && toBeRemoved != nullptr) {
+    // node to remove by key
+    while (toBeRemoved != nullptr) {
         if (toBeRemoved->getItem() == searchKey) {
             found = true;
+            break;
+        }
+        parent = toBeRemoved;
+        if (key < toBeRemoved->getItem().getKey()) {
+            toBeRemoved = toBeRemoved->getLeft();
         }
         else {
-            parent = toBeRemoved;
-            if (searchKey < toBeRemoved->getItem()) {
-                toBeRemoved = toBeRemoved->getLeft();
-            }
-            else {
-                toBeRemoved = toBeRemoved->getRight();
-            }
+            toBeRemoved = toBeRemoved->getRight();
         }
     }
 
-    if (!found) return false; // Node not found
+   
+    if (!found) {
+        return false;
+    }
 
-    // Node has no children
+    // 1: Node has no children (leaf node)
     if (toBeRemoved->getLeft() == nullptr && toBeRemoved->getRight() == nullptr) {
-        if (parent == nullptr) { // Removing root node
-            root = nullptr;
+        if (parent == nullptr) {
+            root = nullptr; // Root node
         }
         else if (parent->getLeft() == toBeRemoved) {
-            parent->setLeft(nullptr);
+            parent->setLeft(nullptr); // Remove from left of parent
         }
         else {
-            parent->setRight(nullptr);
+            parent->setRight(nullptr); // Remove from right of parent
         }
-        delete toBeRemoved;
+        delete toBeRemoved; // Free the memory
         return true;
     }
 
-    //  Node has one child
+    //  2: Node has one child
     if (toBeRemoved->getLeft() == nullptr || toBeRemoved->getRight() == nullptr) {
         BSTNode<EntityKeyPair<K, V>>* child = (toBeRemoved->getLeft() == nullptr)
             ? toBeRemoved->getRight()
             : toBeRemoved->getLeft();
 
-        if (parent == nullptr) { 
-            root = child;
+        if (parent == nullptr) {
+            root = child; // Root node with one child
         }
         else if (parent->getLeft() == toBeRemoved) {
-            parent->setLeft(child);
+            parent->setLeft(child); // Set parent's left child
         }
         else {
-            parent->setRight(child);
+            parent->setRight(child); // Set parent's right child
         }
-        delete toBeRemoved;
+        delete toBeRemoved; // Free the memory
         return true;
     }
 
-    //  Node has two children
+    //  3: Node has two children
+   
     BSTNode<EntityKeyPair<K, V>>* smallestParent = toBeRemoved;
     BSTNode<EntityKeyPair<K, V>>* smallest = toBeRemoved->getRight();
-    while (smallest->getLeft() != nullptr) {  
+    while (smallest->getLeft() != nullptr) {
         smallestParent = smallest;
         smallest = smallest->getLeft();
     }
 
-    // Replace current node's data with the smallest node (in-order successor)
+  
     toBeRemoved->setItem(smallest->getItem());
 
-    // Remove the in-order successor
+   
     if (smallestParent->getLeft() == smallest) {
         smallestParent->setLeft(smallest->getRight());
     }
     else {
         smallestParent->setRight(smallest->getRight());
     }
-    delete smallest;
+
+    delete smallest; // Free the memory
     return true;
 }
+
+
 
 
 
@@ -209,7 +250,7 @@ V& BinaryTree<K, V>::get(const K& key)
     throw std::logic_error("Key not found!");
 }
 
-// size and count to retrive size of keyset 
+
 // size method 
 template <class K, class V>
 int BinaryTree<K, V>::size()

@@ -84,6 +84,30 @@ int main() {
 
     std::cout << "Tree Size : " << mytree.size() << std::endl;
 
+    // remove function
+
+    // Remove a key-value pair
+    std::cout << "\nRemoving key 6:\n";
+    mytree.removeKey(6);
+
+   
+    std::cout << "\nAfter removing key 6:\n";
+    mytree.printInOrder();
+
+
+    // [operator values]
+    std::cout << "key 1 value: " << mytree[1] << std::endl; 
+    std::cout << "Key 2 value: " << mytree[2] << std::endl;  
+
+   
+    try {
+        std::cout << "Key 7 value : " << mytree[7] << std::endl;  
+    }
+    catch (const std::logic_error& e) {
+        std::cout << "Error: " << e.what() << std::endl; 
+    }
+
+
     return 0;
 }
 
