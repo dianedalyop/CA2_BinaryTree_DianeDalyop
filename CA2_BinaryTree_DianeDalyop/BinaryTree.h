@@ -32,7 +32,7 @@ public:
     BinaryTree<K, int> keySet(); // Declare keySet method to return BinaryTree with int (for keys)
 
     void collectKeys(BSTNode<EntityKeyPair<K, V>>* node, BinaryTree<K, int>& keyTree); // Helper for keySet
-
+    void put(K key, V value);
     void printInOrder();
     void printInOrder(BSTNode<EntityKeyPair<K, V>>* node);
     void printPreOrder();
@@ -335,7 +335,44 @@ V& BinaryTree<K, V> ::getKeyValue(const K& key)
 
 }
 
+// PUT METHOD 
+template <class K, class V>
+void BinaryTree<K, V>::put(K key, V value)
+{
+    EntityKeyPair<K, V> newPair(key, value);
+    BSTNode<EntityKeyPair<K, V>>* current = root;
+    BSTNode<EntityKeyPair<K, V>>* parent = nullptr;
 
+    while (current != nullptr)
+    {
+        parent = current;
+        if (key == current->getItem().getKey()) {
+            //  if the Key  is found update the value
+            current->getItem().setValue(value); 
+            return;
+        }
+        else if (key < current->getItem().getKey()) {
+            current = current->getLeft();
+        }
+        else {
+            current = current->getRight();
+        }
+    }
+
+
+
+    // if Key is not found, create and insert a new key-value pair
+    if (parent == nullptr) {
+
+        root = new BSTNode<EntityKeyPair<K, V>>(newPair);
+    }
+    else if (key < parent->getItem().getKey()) {
+        parent->setLeft(new BSTNode<EntityKeyPair<K, V>>(newPair));
+    }
+    else {
+        parent->setRight(new BSTNode<EntityKeyPair<K, V>>(newPair));
+    }
+}
 
 
 

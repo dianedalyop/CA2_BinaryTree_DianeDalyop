@@ -69,6 +69,18 @@ int main() {
     std::cout << "Existing Keys"<< endl;
     mykeySet.printInOrder();
 
+    // put function application
+    std::cout << "Before put function \n";
+    mytree.printInOrder();
+
+    mytree.put(2, "Avocado"); 
+    mytree.put(4, "banana"); 
+    mytree.put(6, "pears");
+
+   
+    std::cout << "After put function \n";
+    mytree.printInOrder();
+
     return 0;
 }
 
