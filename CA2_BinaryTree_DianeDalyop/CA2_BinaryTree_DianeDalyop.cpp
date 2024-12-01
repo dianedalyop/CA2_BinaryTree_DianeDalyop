@@ -81,6 +81,9 @@ int main() {
     std::cout << "After put function \n";
     mytree.printInOrder();
 
+
+    std::cout << "Tree Size : " << mytree.size() << std::endl;
+
     return 0;
 }
 

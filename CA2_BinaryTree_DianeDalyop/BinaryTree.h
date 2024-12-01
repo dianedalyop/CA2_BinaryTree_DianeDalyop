@@ -25,6 +25,7 @@ public:
     void add(const K& key, const V& value);
     bool remove(const K& key);
     void clear(); // Clears the entire tree
+    int size();
     int count();
     V& get(const K& key);
     V& getKeyValue(const K& key);
@@ -186,6 +187,8 @@ bool BinaryTree<K, V>::remove(const K& key)
     return true;
 }
 
+
+
 // Get Function
 template <class K, class V>
 V& BinaryTree<K, V>::get(const K& key)
@@ -204,6 +207,14 @@ V& BinaryTree<K, V>::get(const K& key)
     }
 
     throw std::logic_error("Key not found!");
+}
+
+// size and count to retrive size of keyset 
+// size method 
+template <class K, class V>
+int BinaryTree<K, V>::size()
+{
+    return count(); 
 }
 
 // Count Function
