@@ -11,12 +11,10 @@ class BinaryTree
 {
     void addItemToArray(BSTNode<EntityKeyPair<K, V>>* node, int& pos, EntityKeyPair<K, V>* arr);
 
-
-   
-
 public:
     BSTNode<EntityKeyPair<K, V>>* root;
 
+   
     /// Constructor
     BinaryTree();
     BinaryTree(const BinaryTree<K, V>& other);
@@ -31,6 +29,9 @@ public:
     V& get(const K& key);
     V& getKeyValue(const K& key);
     bool containsKey(K key);
+    BinaryTree<K, int> keySet(); // Declare keySet method to return BinaryTree with int (for keys)
+
+    void collectKeys(BSTNode<EntityKeyPair<K, V>>* node, BinaryTree<K, int>& keyTree); // Helper for keySet
 
     void printInOrder();
     void printInOrder(BSTNode<EntityKeyPair<K, V>>* node);
@@ -278,17 +279,28 @@ EntityKeyPair<K, V>* BinaryTree<K, V>::toArray()
     return arr;
 }
 
+// collecting keys
 template <class K, class V>
-
-void BinaryTree<K, V>::addItemToArray(BSTNode<EntityKeyPair<K, V>>* node, int& pos, EntityKeyPair<K, V>* arr)
+void BinaryTree<K, V>::collectKeys(BSTNode<EntityKeyPair<K, V>>* node, BinaryTree<K, int>& keyTree)
 {
-    if (node != nullptr)
-    {
-        addItemToArray(node->getLeft(), pos, arr);
-        arr[pos++] = node->getItem();
-        addItemToArray(node->getRight(), pos, arr);
+    if (node == nullptr) {
+        return; 
     }
+
+    collectKeys(node->getLeft(), keyTree);         
+    keyTree.add(node->getItem().getKey(), 0);          
+    collectKeys(node->getRight(), keyTree);           
 }
+
+// keySet Function
+template <class K, class V>
+BinaryTree<K, int> BinaryTree<K, V>::keySet()
+{
+    BinaryTree<K, int> keyTree; // new binary tree to store keys
+    collectKeys(root, keyTree); 
+    return keyTree;
+}
+
 
 
 
@@ -351,5 +363,9 @@ bool BinaryTree<K, V>::containsKey(K key)
     return false; 
     // not found
 }
+
+
+
+
 
 

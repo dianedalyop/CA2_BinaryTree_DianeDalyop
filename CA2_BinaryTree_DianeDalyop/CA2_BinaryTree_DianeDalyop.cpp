@@ -62,6 +62,13 @@ int main() {
         std::cerr << e.what() << std::endl;
     }
 
+    // fetching  keys
+
+    BinaryTree<int, int> mykeySet = mytree.keySet();  
+    std::cout << "" << endl;
+    std::cout << "Existing Keys"<< endl;
+    mykeySet.printInOrder();
+
     return 0;
 }
 
