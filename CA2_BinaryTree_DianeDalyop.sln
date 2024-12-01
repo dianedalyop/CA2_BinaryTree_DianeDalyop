@@ -7,6 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CA2_BinaryTree_DianeDalyop"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4657AEF8-03D9-45F6-8E7C-E6EAC0EF8180}"
 	ProjectSection(SolutionItems) = preProject
+		MyfathersDragon.txt = MyfathersDragon.txt
 		README.md = README.md
 	EndProjectSection
 EndProject

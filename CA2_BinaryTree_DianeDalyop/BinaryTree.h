@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-template <class K, class V>
+template <class K, class V = std::nullptr_t>
 class BinaryTree
 {
     void addItemToArray(BSTNode<EntityKeyPair<K, V>>* node, int& pos, EntityKeyPair<K, V>* arr);
@@ -34,7 +34,8 @@ public:
     V& get(const K& key);
     V& getKeyValue(const K& key);
     bool containsKey(K key);
-    BinaryTree<K, int> keySet(); // Declare keySet method to return BinaryTree with int (for keys)
+    BinaryTree<K, int> keySet(); 
+    void loadWordsFromFile(const std::string& filename);
 
     void collectKeys(BSTNode<EntityKeyPair<K, V>>* node, BinaryTree<K, int>& keyTree); // Helper for keySet
     void put(K key, V value);
@@ -44,6 +45,7 @@ public:
     void printPreOrder(BSTNode<EntityKeyPair<K, V>>* node);
     void printPostOrder();
     void printPostOrder(BSTNode<EntityKeyPair<K, V>>* node);
+    void printWordsByLetter(K letter);
 
     EntityKeyPair<K, V>* toArray();
 };
@@ -225,8 +227,63 @@ bool BinaryTree<K, V>::removeKey(const K& key)
     delete smallest; // Free the memory
     return true;
 }
+/// <summary>
+/// loading words from file 
+/// </summary>
+/// <typeparam name="K"></typeparam>
+/// <typeparam name="V"></typeparam>
+/// <param name="filename"></param>
+template <class K, class V>
+void BinaryTree<K, V>::loadWordsFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        throw std::runtime_error("Unable to open file: " + filename);
+    }
 
+    std::string word;
+    while (file >> word) {
+        char firstLetter = std::tolower(word[0]); 
+        char key = firstLetter;                
 
+       
+        if (!this->containsKey(key)) {
+            this->put(key, BinaryTree<std::string, std::nullptr_t>());
+        }
+
+        
+        this->operator[](key).add(word, nullptr);
+    }
+
+    file.close();
+}
+// Print words by first letter
+template <class K, class V>
+void BinaryTree<K, V>::printWordsByLetter(K letter)
+{
+    BSTNode<EntityKeyPair<K, V>>* current = root;
+
+    bool foundWords = false;
+
+    while (current != nullptr)
+    {
+        if (current->getItem().getKey() == letter)
+        {
+            std::cout << "Words starting with '" << letter << "':\n";
+            current->getItem().getValue().printInOrder();  // Assuming value is a BinaryTree with words
+            return;
+        }
+        else if (letter < current->getItem().getKey())
+        {
+            current = current->getLeft();
+        }
+        else
+        {
+            current = current->getRight();
+        }
+    }
+
+    std::cout << "No words found starting with '" << letter << "'.\n";
+}
 
 
 
@@ -278,11 +335,11 @@ void BinaryTree<K, V>::printInOrder()
 template <class K, class V>
 void BinaryTree<K, V>::printInOrder(BSTNode<EntityKeyPair<K, V>>* node)
 {
-    if (node == nullptr) return;
-
-    printInOrder(node->getLeft());
-    std::cout << node->getItem().getKey() << ": " << node->getItem().getValue() << std::endl;
-    printInOrder(node->getRight());
+    if (node != nullptr) {
+        printInOrder(node->getLeft());
+        std::cout << node->getItem() << std::endl;  // No ambiguity now
+        printInOrder(node->getRight());
+    }
 }
 template <class K, class V>
 void BinaryTree<K, V>::printPreOrder()

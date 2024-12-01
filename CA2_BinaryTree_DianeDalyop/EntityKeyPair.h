@@ -7,7 +7,6 @@ private:
     K key; // The key
     V value; // The value
 
-
 public:
     // Default constructor
     EntityKeyPair() : key(K()), value(V()) {}
@@ -16,44 +15,39 @@ public:
     EntityKeyPair(K key, V value) : key(key), value(value) {}
 
     // Getter for the key
-    K getKey() const {
-        return key;
-    }
+    const K& getKey() const { return key; }
 
     // Getter for the value
-   
-
-    V& getValue() { return value; } 
-
-
-    const V& getValue() const { return value; }   
-
+    V& getValue() { return value; }
+    const V& getValue() const { return value; }
 
     // Setter for the key
-    void setKey(K key) {
-
-        this->key = key;
-    }
+    void setKey(K key) { this->key = key; }
 
     // Setter for the value
-    void setValue(V value) {
-        this->value = value;
-    }
-
-    // Overload the < operator for sorting in BST
-    bool operator<(const EntityKeyPair& other) const {
-        return key < other.key;
-    }
+    void setValue(const V& val) { value = val; }
 
     // Overload the == operator for equality comparison
     bool operator==(const EntityKeyPair& other) const {
         return key == other.key;
     }
 
-    // Display the key-value pair (useful for debugging)
-    friend std::ostream& operator<<(std::ostream& os, const EntityKeyPair<K, V>& pair) {
-        os << "[" << pair.key << ": " << pair.value << "]";
-        return os;
+    // Less-than operator
+    bool operator<(const EntityKeyPair& other) const {
+        return key < other.key;
     }
-
 };
+
+// Generic operator<< for other types of V
+template <class K, class V>
+inline std::ostream& operator<<(std::ostream& os, const EntityKeyPair<K, V>& pair) {
+    os << pair.getKey() << ": " << pair.getValue();
+    return os;
+}
+
+// Specialization for nullptr_t as value type (V)
+template <class K>
+inline std::ostream& operator<<(std::ostream& os, const EntityKeyPair<K, std::nullptr_t>& pair) {
+    os << pair.getKey() << ": null";  // Print "null" for nullptr_t
+    return os;
+}

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <fstream>
+#include <sstream>
 using namespace std;
 #include "BinaryTree.h"
 #include "BSTNode.h"
@@ -107,7 +109,37 @@ int main() {
         std::cout << "Error: " << e.what() << std::endl; 
     }
 
+    // stage 2 
 
+    
+    // Treemap to store letters and words
+
+    BinaryTree<char, BinaryTree<std::string, std::nullptr_t>> letterTree;
+
+    try {
+        letterTree.loadWordsFromFile("myfathersDragon.txt");
+
+        std::cout << "File loaded successfully. Enter a letter to display words : \n";
+
+        std::string input;
+        while (true) {
+            std::cout << "Enter a letter: ";
+            std::cin >> input;
+
+            if (input == "exit") break;
+
+            if (input.length() == 1 && isalpha(input[0])) {
+                char letter = std::tolower(input[0]);
+                letterTree.printWordsByLetter(letter);
+            }
+            else {
+                std::cout << "Invalid input. Please enter a single letter.\n";
+            }
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << '\n';
+    }
     return 0;
 }
 
