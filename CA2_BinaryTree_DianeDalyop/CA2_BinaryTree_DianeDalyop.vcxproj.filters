@@ -35,9 +35,6 @@
     <ClInclude Include="Song.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CA2_BinaryTree_DianeDalyop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\myfathersDragon.txt">
