@@ -128,14 +128,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CA2_BinaryTree_DianeDalyop.cpp" />
+    <ClCompile Include="Song.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinaryTree.h" />
     <ClInclude Include="BSTNode.h" />
     <ClInclude Include="EntityKeyPair.h" />
+    <ClInclude Include="Song.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\myfathersDragon.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Song_Dataset.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

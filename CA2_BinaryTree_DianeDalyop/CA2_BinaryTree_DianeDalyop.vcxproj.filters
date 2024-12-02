@@ -18,6 +18,9 @@
     <ClCompile Include="CA2_BinaryTree_DianeDalyop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Song.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinaryTree.h">
@@ -29,10 +32,16 @@
     <ClInclude Include="EntityKeyPair.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Song.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\myfathersDragon.txt">
       <Filter>Header Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Song_Dataset.csv" />
   </ItemGroup>
 </Project>
