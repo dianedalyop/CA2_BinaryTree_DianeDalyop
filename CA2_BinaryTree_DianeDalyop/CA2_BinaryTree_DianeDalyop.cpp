@@ -7,12 +7,16 @@
 #include <fstream>
 #include <sstream>
 #include "Song.h"
+#include <algorithm>
 using namespace std;
 #include "BinaryTree.h"
 #include "BSTNode.h"
 
 #include "EntityKeyPair.h"
-// 
+#include "CA2_BinaryTree_DianeDalyop.h"
+
+void viewSubset(const std::vector<Song>& records);
+
 int main() {
 
 	BinaryTree<int, std::string> mytree;
@@ -21,6 +25,10 @@ int main() {
 	std::string filename = "Song_Dataset.csv";
 	std::vector<Song> songs = parseCSV(filename);
 	int choice;
+
+	mytree.add(1, "apple");
+	mytree.add(2, "orange");
+	mytree.add(3, "Kiwi");
 
 	do {
 
@@ -45,11 +53,7 @@ int main() {
 		switch (choice)
 		{
 		case 1:
-			mytree.add(1, "apple");
-
-
-			mytree.add(2, "orange");
-			mytree.add(3, "Kiwi");
+			
 			mytree.add(4, "Banana");
 			mytree.add(5, "Peach");
 			std::cout << "Items added.\n";
@@ -215,6 +219,66 @@ int main() {
 		}
 	} while (choice != 0);
 
+
+
+
+	std::string filename2 = "Song_Dataset.csv";
+	std::vector<Song> songtofilter = parseCSV(filename2);
+
+	if (songtofilter.empty()) {
+		std::cout << "No data found in the CSV file." << std::endl;
+		return 0;
+	}
+	char choiceToFilter;
+	do {
+		std::cout << "\nOptions:\n";
+		std::cout << "1. View a subset of the data.\n";
+		std::cout << "2. Exit.\n";
+		std::cout << "Enter your choice: ";
+		std::cin >> choiceToFilter;
+
+		if (choiceToFilter == '1') {
+			viewSubset(songs);
+		}
+	} while (choice != '2');
+
+	std::cout << "Exiting program. Goodbye!\n";
+
 	return 0;
 }
 
+void viewSubset(const std::vector<Song>& records) {
+	std::string field, value;
+	std::cout << "Enter the field to filter by (Song, Artist, Genre, Downloads, Awards, Streams): ";
+	std::cin >> field;
+
+	std::transform(field.begin(), field.end(), field.begin(), ::tolower);
+
+	std::cout << "Enter the value to filter by: ";
+	std::cin.ignore(); 
+	std::getline(std::cin, value);
+
+	std::cout << "Matching Records:\n";
+
+	bool found = false;
+	for (const auto& songtrack : records) {
+		if ((field == "song" && songtrack.song == value) ||
+			(field == "artist" && songtrack.artist == value) ||
+			(field == "genre" && songtrack.genre == value) ||
+			(field == "downloads" && std::to_string(songtrack.downloads) == value) ||
+			(field == "awards" && songtrack.awards == value) ||
+			(field == "streams" && std::to_string(songtrack.streams) == value)) {
+			std::cout << "Song: " << songtrack.song
+				<< ", Artist: " << songtrack.artist
+				<< ", Genre: " << songtrack.genre
+				<< ", Downloads: " << songtrack.downloads
+				<< ", Awards: " << songtrack.awards
+				<< ", Streams: " << songtrack.streams << '\n';
+			found = true;
+		}
+	}
+
+	if (!found) {
+		std::cout << "No matching records found.\n";
+	}
+}

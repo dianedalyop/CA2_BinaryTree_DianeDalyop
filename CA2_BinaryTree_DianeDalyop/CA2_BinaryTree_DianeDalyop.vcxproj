@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="BinaryTree.h" />
     <ClInclude Include="BSTNode.h" />
+    <ClInclude Include="CA2_BinaryTree_DianeDalyop.h" />
     <ClInclude Include="EntityKeyPair.h" />
     <ClInclude Include="Song.h" />
   </ItemGroup>
